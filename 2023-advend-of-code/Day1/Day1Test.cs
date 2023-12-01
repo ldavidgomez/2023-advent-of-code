@@ -1,3 +1,4 @@
+using System.Collections;
 using NUnit.Framework;
 
 namespace _2023_advend_of_code.Day1;
@@ -21,19 +22,63 @@ public class Day1Test
             "treb7uchet"
         };
 
-        var result = new Day1(input).Solve();
+        var result = new Day1(input).SolvePart1();
 
         Assert.AreEqual(expected, result);
     }
-    
+
     [Test]
-    public void should_return_142_from_file()
+    public void should_return_valid_result_from_file()
     {
         const int expected = 56397;
         const string path = "Day1/input_part_1.txt";
 
-        var result = new Day1(path).Solve();
+        var result = new Day1(path).SolvePart1();
 
         Assert.AreEqual(expected, result);
+    }
+
+    [Test]
+    public void should_return_valid_from_string()
+    {
+        const int expect = 281;
+        var input = new List<string>
+        {
+            "two1nine",
+            "eightwothree",
+            "abcone2threexyz",
+            "xtwone3four",
+            "4nineeightseven2",
+            "zoneight234",
+            "7pqrstsixteen"
+        };
+
+        var day1 = new Day1(input);
+        Assert.AreEqual(expect, day1.SolvePart2());
+    }
+    
+    [Test]
+    public void should_return_valid_result_from_string()
+    {
+        const int expect = 31;
+        var input = new List<string>
+        {
+            //"8kgplfhvtvqpfsblddnineoneighthg"
+            "3xtwone"
+        };
+
+        var day1 = new Day1(input);
+        Assert.AreEqual(expect, day1.SolvePart2());
+    }
+
+    [Test]
+    public void should_return_valid_result_from_file_2()
+    {
+        const int expect = 55701;
+        const string path = "Day1/input_part_2.txt";
+
+        var day1 = new Day1(path);
+
+        Assert.AreEqual(expect, day1.SolvePart2());
     }
 }
