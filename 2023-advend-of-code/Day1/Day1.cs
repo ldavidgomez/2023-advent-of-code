@@ -40,8 +40,8 @@ public class Day1
 
         return parsedNumbers.Sum();
     }
-    
-    public List<string> ImportFromFile(string path)
+
+    private static List<string> ImportFromFile(string path)
     {
         var lines = File.ReadAllLines(path);
         return lines.ToList();
