@@ -34,15 +34,8 @@ public class Day1
         var parsedNumbers = new List<int>();
         if (parsedNumbers == null) throw new ArgumentNullException(nameof(parsedNumbers));
 
-        foreach (var str in _input)
+        foreach (var concatDigits in from str in _input select str.Where(char.IsDigit).Select(c => c.ToString()).ToList() into digits where digits.Count != 0 select digits.First() + digits.Last())
         {
-            // Extract digits from the string
-            var digits = str.Where(char.IsDigit).Select(c => c.ToString()).ToList();
-            if (digits.Count == 0) continue;
-
-            // Concatenate the first and last digits
-            var concatDigits = digits.First() + digits.Last();
-
             // Parse the concatenated digits to an integer with error handling
             if (!int.TryParse(concatDigits, out var number))
                 throw new FormatException($"Cannot parse '{concatDigits}' into an integer.");
@@ -70,14 +63,11 @@ public class Day1
                 for (var i = 1; i <= newInput.Length; i++)
                 {
                     var inputPart = newInput[..i];
-                    foreach (var keyValuePair in Numbers)
+                    foreach (var keyValuePair in Numbers.Where(keyValuePair => inputPart.Contains(keyValuePair.Key)))
                     {
-                        if (inputPart.Contains(keyValuePair.Key))
-                        {
-                            inputPart = inputPart.Replace(keyValuePair.Key, keyValuePair.Value);
-                            newInput = newInput.Replace(newInput[..(i-1)], inputPart);
-                            i = 1;
-                        }
+                        inputPart = inputPart.Replace(keyValuePair.Key, keyValuePair.Value);
+                        newInput = newInput.Replace(newInput[..(i-1)], inputPart);
+                        i = 1;
                     }
                 }
                 

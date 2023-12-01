@@ -60,11 +60,12 @@ public class Day1Test
     [Test]
     public void should_return_valid_result_from_string()
     {
-        const int expect = 31;
+        const int expect = 85;
         var input = new List<string>
         {
-            //"8kgplfhvtvqpfsblddnineoneighthg"
-            "3xtwone"
+            //8kgplfhvtvqpfsblddnineoneighthg"
+            //"3xtwone"
+            "8fmmthreeeight6five"
         };
 
         var day1 = new Day1(input);
