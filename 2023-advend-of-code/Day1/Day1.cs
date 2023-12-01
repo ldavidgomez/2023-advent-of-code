@@ -49,11 +49,11 @@ public class Day1
     
     public int SolvePart2()
     {
-        CastInputStringToNumbers();
+        Normalize();
         return SolvePart1();
     }
 
-    private void CastInputStringToNumbers()
+    private void Normalize()
     {
         var castedInput = new List<string>();
         foreach (var s in _input)
