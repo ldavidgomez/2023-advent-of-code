@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 namespace _2023_advend_of_code.Day1;
 
 public class Day1
@@ -36,11 +34,9 @@ public class Day1
 
         foreach (var concatDigits in from str in _input select str.Where(char.IsDigit).Select(c => c.ToString()).ToList() into digits where digits.Count != 0 select digits.First() + digits.Last())
         {
-            // Parse the concatenated digits to an integer with error handling
             if (!int.TryParse(concatDigits, out var number))
                 throw new FormatException($"Cannot parse '{concatDigits}' into an integer.");
 
-            // Add the parsed number to the list
             parsedNumbers.Add(number);
         }
 
@@ -55,10 +51,10 @@ public class Day1
 
     private void Normalize()
     {
-        var castedInput = new List<string>();
-        foreach (var s in _input)
+        var normalizedInput = new List<string>();
+        foreach (var input in _input)
         {
-            var newInput = s;
+            var newInput = input;
 
                 for (var i = 1; i <= newInput.Length; i++)
                 {
@@ -71,11 +67,11 @@ public class Day1
                     }
                 }
                 
-            castedInput.Add(newInput);
+            normalizedInput.Add(newInput);
         }
         
         _input.Clear();
-        _input.AddRange(castedInput);
+        _input.AddRange(normalizedInput);
     }
 
     private static List<string> ImportFromFile(string path)
