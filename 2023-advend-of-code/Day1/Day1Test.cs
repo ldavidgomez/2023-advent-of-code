@@ -12,7 +12,7 @@ public class Day1Test
     [Test]
     public void should_return_142()
     {
-        var expected = 142;
+        const int expected = 142;
         var input = new List<string>
         {
             "1abc2",
@@ -29,8 +29,8 @@ public class Day1Test
     [Test]
     public void should_return_142_from_file()
     {
-        var expected = 56397;
-        var path = "Day1/input_part_1.txt";
+        const int expected = 56397;
+        const string path = "Day1/input_part_1.txt";
 
         var result = new Day1(path).Solve();
 
