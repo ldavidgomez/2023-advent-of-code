@@ -1,4 +1,4 @@
-namespace _2023_advend_of_code.Day2;
+namespace _2023_advent_of_code.Day2;
 
 
 public class Day2
@@ -68,14 +68,14 @@ public class Day2
         return _games.Select(x => x.GetPowerValue()).Sum();
     }
 }
-public class RoundResult
+public record RoundResult
 {
     public int Blue { get; set; }
     public int Red { get; set; }
     public int Green { get; set; }
 }
 
-public class ConfigGame : RoundResult {}
+public record ConfigGame : RoundResult {}
 
 public class Game
 {

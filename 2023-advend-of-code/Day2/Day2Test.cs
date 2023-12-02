@@ -1,8 +1,6 @@
-using System.Collections;
-using _2023_advend_of_code.Day2;
 using NUnit.Framework;
 
-namespace _2023_advend_of_code.Day2;
+namespace _2023_advent_of_code.Day2;
 
 public class Day2Test
 {

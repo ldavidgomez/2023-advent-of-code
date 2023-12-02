@@ -1,7 +1,6 @@
-using System.Collections;
 using NUnit.Framework;
 
-namespace _2023_advend_of_code.Day1;
+namespace _2023_advent_of_code.Day1;
 
 public class Day1Test
 {
