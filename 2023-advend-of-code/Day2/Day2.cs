@@ -60,8 +60,12 @@ public class Day2
 
     public int TotalResult()
     {
-        var validGames = _games.Where(x => x.IsValidGame()).Select(x => x.Id).ToList();
-        return validGames.Sum();
+        return _games.Where(x => x.IsValidGame()).Select(x => x.Id).Sum();
+    }
+
+    public int TotalPowerValue()
+    {
+        return _games.Select(x => x.GetPowerValue()).Sum();
     }
 }
 public class RoundResult
@@ -97,5 +101,28 @@ public class Game
         return Results.Any(roundResult => roundResult.Blue > _configGame.Blue || roundResult.Red > _configGame.Red || roundResult.Green > _configGame.Green)
             ? 0 
             : Results.Count;
+    }
+
+    public int GetPowerValue()
+    {
+        var minValidConfig = GetMinValidConfig();
+        return minValidConfig.Blue * minValidConfig.Red * minValidConfig.Green;
+    }
+
+    private ConfigGame GetMinValidConfig()
+    {
+        var minValidConfig = new ConfigGame();
+        
+        Results.ForEach(roundResult =>
+        {
+            if (roundResult.Blue > minValidConfig.Blue)
+                minValidConfig.Blue = roundResult.Blue;
+            if (roundResult.Red > minValidConfig.Red)
+                minValidConfig.Red = roundResult.Red;
+            if (roundResult.Green > minValidConfig.Green)
+                minValidConfig.Green = roundResult.Green;
+        });
+        
+        return minValidConfig;
     }
 }
