@@ -3,9 +3,10 @@ namespace _2023_advent_of_code.Day3;
 
 public class Day3
 {
-    private readonly List<WordPosition> _wordPositions;
+    private readonly List<WordLocation> _wordPositions;
     private string[] _map = {};
     private const char IgnoreSymbol = '.';
+    private const char EngineSymbol = '*';
     
     public Day3(string path)
     {
@@ -19,9 +20,9 @@ public class Day3
         _wordPositions = GetWordPositions();
     }
 
-    private List<WordPosition> GetWordPositions()
+    private List<WordLocation> GetWordPositions()
     {
-        var wordPositions = new List<WordPosition>();
+        var wordPositions = new List<WordLocation>();
         for (var posY = 0; posY < _map.Length; posY++)
         {
             var startWord = 0;
@@ -63,76 +64,56 @@ public class Day3
         return wordPositions;
     }
 
-    private static void CreateAndAddWord(string line, int startWord, int endWord, int posY, List<WordPosition> wordPositions)
+    private static void CreateAndAddWord(string line, int startWord, int endWord, int posY, List<WordLocation> wordPositions)
     {
         var word = line.Substring(startWord, endWord - startWord + 1);
-        wordPositions.Add(new WordPosition(word, new Position(startWord, endWord, posY)));
+        wordPositions.Add(new WordLocation(word, new Location(startWord, endWord, posY)));
     }
     
     public int SolvePart1()
     {
-        var validWords = (from wordPosition in _wordPositions let symbols = GetSurroundingSymbols(wordPosition) where !symbols.All(char.IsDigit) select wordPosition.Word).ToList();
+        var validWords = 
+            (from wordPosition in _wordPositions let symbols = 
+                GetSurroundingSymbols(wordPosition) where 
+                !symbols.Select(x => x.Symbol).All(char.IsDigit) 
+                select wordPosition.Word).ToList();
 
         return validWords.Sum(int.Parse);
     }
 
-    private List<char> GetSurroundingSymbols(WordPosition wordPosition)
-    {
-        var surroundingSymbols = new List<char>();
-        var position = wordPosition.Position;
-        
-        for (var x = position.StartX; x <= position.EndX; x++)
-        {
-            var y = position.Y;
-        
-            var line = _map[y];
-            var leftX = x - 1;
-            var rightX = x + 1;
-            var upperY = y - 1;
-            var lowerY = y + 1;
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        leftX >= 0, 
-                                        () => line[leftX]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        rightX < line.Length, 
-                                        () => line[rightX]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        upperY >= 0, 
-                                        () => _map[upperY][x]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        lowerY < _map.Length, 
-                                        () => _map[lowerY][x]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        leftX >= 0 && upperY >= 0, 
-                                        () => _map[upperY][leftX]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        leftX >= 0 && lowerY < _map.Length, 
-                                        () => _map[lowerY][leftX]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        rightX < line.Length && upperY >= 0, 
-                                        () => _map[upperY][rightX]);
-
-            AddSymbolIfWithinBoundaries(surroundingSymbols, 
-                                        rightX < line.Length && lowerY < _map.Length, 
-                                        () => _map[lowerY][rightX]);
-        }
-
-        return surroundingSymbols.Where(x => x != IgnoreSymbol).ToList();
-    }
-
-    private void AddSymbolIfWithinBoundaries(ICollection<char> symbols, bool condition, Func<char> getSymbolFunc)
+    private void AddSymbol(ICollection<SymbolPosition> list, int x, int y, bool condition)
     {
         if (!condition) return;
         
-        var symbol = getSymbolFunc();
-        symbols.Add(symbol);
+        var item = new SymbolPosition(_map[y][x], new Position(x, y));
+        list.Add(item);
+    }
+
+    private List<SymbolPosition> GetSurroundingSymbols(WordLocation wordLocation)
+    {
+        var surroundingSymbols = new List<SymbolPosition>();
+        var position = wordLocation.Location;
+    
+        for (var i = position.StartX; i <= position.EndX; i++)
+        {
+            var posY = position.Y;
+    
+            var line = _map[posY];
+            var left = i - 1;
+            var right = i + 1;
+            var top = posY - 1;
+            var bottom = posY + 1;
+        
+            AddSymbol(surroundingSymbols, left, posY, left >= 0);
+            AddSymbol(surroundingSymbols, right, posY, right < line.Length);
+            AddSymbol(surroundingSymbols, i, top, top >= 0);
+            AddSymbol(surroundingSymbols, i, bottom, bottom < _map.Length);
+            AddSymbol(surroundingSymbols, left, top, left >= 0 && top >= 0);
+            AddSymbol(surroundingSymbols, left, bottom, left >= 0 && bottom < _map.Length);
+            AddSymbol(surroundingSymbols, right, top, right < line.Length && top >= 0);
+            AddSymbol(surroundingSymbols, right, bottom, right < line.Length && bottom < _map.Length);
+        }
+        return surroundingSymbols.Where(x => !x.Symbol.Equals(IgnoreSymbol)).ToList();
     }
 
     private void ImportFromFile(string path)
@@ -141,8 +122,32 @@ public class Day3
         _map = lines.ToArray();
     }
 
-    
+
+    public int SolvePart2()
+    {
+        var validWords = new List<WorldSymbol>();
+        foreach (var wordPosition in _wordPositions)
+        {
+            var symbols = GetSurroundingSymbols(wordPosition);
+            validWords.AddRange(from symbol in symbols where symbol.Symbol == EngineSymbol select new WorldSymbol(wordPosition, symbol));
+        }
+
+        var group = validWords.Distinct()
+            .GroupBy(x => x.SymbolPosition)
+            .Where(x => x.Count() > 1)
+            .ToDictionary(k => k.Key, v => v.ToList())
+            .Select(x => x.Value)
+            .ToList();
+
+        return group.Select(worldSymbols => 
+            worldSymbols.Select(x => x.WordLocation.Word).ToList())
+            .Select(words => words.Aggregate(1, (current, word) => current * int.Parse(word)))
+            .Sum();
+    }
 }
 
-public record WordPosition(string Word, Position Position);
-public record Position(int StartX, int EndX, int Y);
+public record WordLocation(string Word, Location Location);
+public record SymbolPosition(char Symbol, Position Position);
+public record Location(int StartX, int EndX, int Y);
+public record Position(int X, int Y);
+public record WorldSymbol(WordLocation WordLocation, SymbolPosition SymbolPosition);
