@@ -63,7 +63,7 @@ public class Day04
         return cards.Select(card => card.Winners.Intersect(card.Numbers).ToList()).Where(t => t.Any()).Sum(CalculatePoints);
     }
     
-    private IEnumerable<Card> GetWinningCards(IEnumerable<Card> cards)
+    private static IEnumerable<Card> GetWinningCards(IEnumerable<Card> cards)
     {
         var winningCards = new List<Card>();
         foreach (var card in cards)
