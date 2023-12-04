@@ -1,8 +1,8 @@
 using NUnit.Framework;
 
-namespace _2023_advent_of_code.Day3;
+namespace _2023_advent_of_code.Day03;
 
-public class Day3Test
+public class Day03Test
 {
     [SetUp]
     public void Setup()
@@ -25,7 +25,7 @@ public class Day3Test
             "...$.*....",
             ".664.598.."
         };
-        var day3 = new Day3(input);
+        var day3 = new _2023_advent_of_code.Day03.Day03(input);
 
         var result = day3.SolvePart1();
         Assert.AreEqual(expected, result);
@@ -35,7 +35,7 @@ public class Day3Test
     public void should_return_valid_result_from_file()
     {
         const int expected = 559667;
-        var day3 = new Day3("Day3/input.txt");
+        var day3 = new _2023_advent_of_code.Day03.Day03("Day3/input.txt");
 
         var result = day3.SolvePart1();
         Assert.AreEqual(expected, result);
@@ -58,7 +58,7 @@ public class Day3Test
             ".664.598.."
         };
         
-        var day3 = new Day3(input);
+        var day3 = new _2023_advent_of_code.Day03.Day03(input);
         var result = day3.SolvePart2();
         
         Assert.AreEqual(expected, result);
@@ -68,7 +68,7 @@ public class Day3Test
     public void should_return_valid_result_gear_from_file()
     {
         const int expected = 86841457;
-        var day3 = new Day3("Day3/input.txt");
+        var day3 = new _2023_advent_of_code.Day03.Day03("Day3/input.txt");
 
         var result = day3.SolvePart2();
         Assert.AreEqual(expected, result);

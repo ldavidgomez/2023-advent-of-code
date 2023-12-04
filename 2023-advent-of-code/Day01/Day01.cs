@@ -1,6 +1,6 @@
-namespace _2023_advent_of_code.Day1;
+namespace _2023_advent_of_code.Day01;
 
-public class Day1
+public class Day01
 {
     private readonly List<string> _input;
 
@@ -17,12 +17,12 @@ public class Day1
             {"nine", "9"}
         };
 
-    public Day1(List<string> input)
+    public Day01(List<string> input)
     {
         _input = input;
     }
     
-    public Day1(string path)
+    public Day01(string path)
     {
         _input = ImportFromFile(path);
     }

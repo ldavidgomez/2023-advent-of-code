@@ -1,8 +1,8 @@
 using NUnit.Framework;
 
-namespace _2023_advent_of_code.Day1;
+namespace _2023_advent_of_code.Day01;
 
-public class Day1Test
+public class Day01Test
 {
     [SetUp]
     public void Setup()
@@ -21,7 +21,7 @@ public class Day1Test
             "treb7uchet"
         };
 
-        var result = new Day1(input).SolvePart1();
+        var result = new _2023_advent_of_code.Day01.Day01(input).SolvePart1();
 
         Assert.AreEqual(expected, result);
     }
@@ -32,7 +32,7 @@ public class Day1Test
         const int expected = 56397;
         const string path = "Day1/input_part_1.txt";
 
-        var result = new Day1(path).SolvePart1();
+        var result = new _2023_advent_of_code.Day01.Day01(path).SolvePart1();
 
         Assert.AreEqual(expected, result);
     }
@@ -52,7 +52,7 @@ public class Day1Test
             "7pqrstsixteen"
         };
 
-        var day1 = new Day1(input);
+        var day1 = new _2023_advent_of_code.Day01.Day01(input);
         Assert.AreEqual(expect, day1.SolvePart2());
     }
     
@@ -67,7 +67,7 @@ public class Day1Test
             "8fmmthreeeight6five"
         };
 
-        var day1 = new Day1(input);
+        var day1 = new _2023_advent_of_code.Day01.Day01(input);
         Assert.AreEqual(expect, day1.SolvePart2());
     }
 
@@ -77,7 +77,7 @@ public class Day1Test
         const int expect = 55701;
         const string path = "Day1/input_part_2.txt";
 
-        var day1 = new Day1(path);
+        var day1 = new _2023_advent_of_code.Day01.Day01(path);
 
         Assert.AreEqual(expect, day1.SolvePart2());
     }

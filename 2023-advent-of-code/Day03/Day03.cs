@@ -1,20 +1,20 @@
-namespace _2023_advent_of_code.Day3;
+namespace _2023_advent_of_code.Day03;
 
 
-public class Day3
+public class Day03
 {
     private readonly List<WordLocation> _wordPositions;
     private string[] _map = {};
     private const char IgnoreSymbol = '.';
     private const char EngineSymbol = '*';
     
-    public Day3(string path)
+    public Day03(string path)
     {
         ImportFromFile(path);
         _wordPositions = GetWordPositions();
     }
 
-    public Day3(string[] map)
+    public Day03(string[] map)
     {
         _map = map;
         _wordPositions = GetWordPositions();

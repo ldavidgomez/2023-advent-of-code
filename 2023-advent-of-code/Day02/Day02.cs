@@ -1,16 +1,16 @@
-namespace _2023_advent_of_code.Day2;
+namespace _2023_advent_of_code.Day02;
 
 
-public class Day2
+public class Day02
 {
     private readonly List<Game> _games;
 
-    public Day2(List<Game> games)
+    public Day02(List<Game> games)
     {
         _games = games;
     }
 
-    public Day2(string path, ConfigGame configGame)
+    public Day02(string path, ConfigGame configGame)
     {
         _games = ImportFromFile(path,configGame);
     }

@@ -1,8 +1,8 @@
 using NUnit.Framework;
 
-namespace _2023_advent_of_code.Day2;
+namespace _2023_advent_of_code.Day02;
 
-public class Day2Test
+public class Day02Test
 {
     [SetUp]
     public void Setup()
@@ -64,7 +64,7 @@ public class Day2Test
             
         };
 
-        var results = new Day2(games).TotalResult();
+        var results = new _2023_advent_of_code.Day02.Day02(games).TotalResult();
         
         Assert.AreEqual(8, results);
     }
@@ -76,7 +76,7 @@ public class Day2Test
         const string path = "Day2/input.txt";
         var configGame = new ConfigGame { Blue = 14, Red = 12, Green = 13 };
 
-        var result = new Day2(path, configGame).TotalResult();
+        var result = new _2023_advent_of_code.Day02.Day02(path, configGame).TotalResult();
 
         Assert.AreEqual(expected, result);
     }
@@ -134,7 +134,7 @@ public class Day2Test
             
         };
         
-        var result = new Day2(games).TotalPowerValue();
+        var result = new _2023_advent_of_code.Day02.Day02(games).TotalPowerValue();
         
         Assert.AreEqual(2286, result);
     }
@@ -146,7 +146,7 @@ public class Day2Test
         const string path = "Day2/input.txt";
         var configGame = new ConfigGame();
 
-        var result = new Day2(path, configGame).TotalPowerValue();
+        var result = new _2023_advent_of_code.Day02.Day02(path, configGame).TotalPowerValue();
 
         Assert.AreEqual(expected, result);
     }
