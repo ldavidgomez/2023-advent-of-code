@@ -31,12 +31,17 @@ public class Day06
         }
     }
 
+    private static long ExtractLong(string input)
+    {
+        var splitInput = input.Split(":")[1].Trim();
+        return long.Parse(splitInput.Replace(" ", ""));
+    }
+
     private void SetRacesWithKerning()
     {
-        var times = _input[0].Trim().Split(":")[1].Trim().Replace(" ","");
-        var distances = _input[1].Trim().Split(":")[1].Trim().Replace(" ","");
-
-        _races = new List<Race> {new Race(long.Parse(distances), long.Parse(times))};
+        var times = ExtractLong(_input[0]);
+        var distances = ExtractLong(_input[1]);
+        _races = new List<Race> { new Race(distances, times) };
     }
 
     private void SetRacesWithoutKerning()
