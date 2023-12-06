@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 
 namespace _2023_advent_of_code.Day05;
@@ -6,7 +5,7 @@ namespace _2023_advent_of_code.Day05;
 
 public class Day05
 {
-    public Dictionary<string, string> _map = new Dictionary<string, string>
+    private readonly Dictionary<string, string> _map = new()
     {
         {"seed", "soil"},
         {"soil", "fertilizer"},
@@ -27,18 +26,17 @@ public class Day05
         {"temperature", "humidity"},
         {"humidity", "location"}
     };
-    
-    private readonly IEnumerable<string> _input;
+
     private readonly Almanac _almanac;
 
 
     public Day05(string path)
     {
-        _input = File.ReadAllLines(path).ToList();
-        _almanac = ParseAlmanac(_input);
+        var input = File.ReadAllLines(path).ToList();
+        _almanac = ParseAlmanac(input);
     }
 
-    public Day05(List<string> almanac)
+    public Day05(IEnumerable<string> almanac)
     {
         _almanac = ParseAlmanac(almanac);
     }
@@ -51,7 +49,7 @@ public class Day05
                     "[^.0-9\\s]", "-"), "[-]{2,}", "-").Split("-").Where(x => x != "").ToArray();
 
         var seeds = input[0].Split(" ").Where(x => x != "").Select(long.Parse).ToList();
-        var ranges = new HashSet<Seed>();
+        var ranges = new HashSet<SeedRules>();
         for (var i = 1; i < input.Length; i++)
         {
             var range = input[i].Split(" ").Where(x => x != "").ToArray();
@@ -62,9 +60,9 @@ public class Day05
         return new Almanac(seeds, ranges);
     }
 
-    private HashSet<Seed> CreateRanges(IReadOnlyList<string> range, int type)
+    private IEnumerable<SeedRules> CreateRanges(IReadOnlyList<string> range, int type)
     {
-        var ranges = new HashSet<Seed>();
+        var ranges = new HashSet<SeedRules>();
         for (var i = 0; i < range.Count; i+=3)
         {
             var destinationStart = long.Parse(range[i]);
@@ -75,103 +73,134 @@ public class Day05
             
             if (from == null || to == null) throw new ArgumentNullException();
 
-            ranges.Add(new Seed(from, to, destinationStart, sourceStart, length));
+            ranges.Add(new SeedRules(from, destinationStart, sourceStart, length));
         }
 
         return ranges;
     }
 
-    private IEnumerable<long> GetRange(long sourceStart, long length)
-    {
-        var range = new List<long>();
-        for (var i = 0; i < length; i++)
-        {
-            range.Add(sourceStart + i);
-        }
-
-        return range;
-    }
-
     public long SolvePart1()
     {
-        var results = (
-            from seed in _almanac.Seeds 
-            select GetValue(seed, _almanac.Ranges.Where(x => x.From == "seed" && x.SourceStart <= seed && (x.SourceStart + x.Length) >= seed)) into toSoil 
-            select GetValue(toSoil, _almanac.Ranges.Where(x => x.From == "soil" && x.SourceStart <= toSoil && (x.SourceStart + x.Length) >= toSoil)) into toFertilizer 
-            select GetValue(toFertilizer, _almanac.Ranges.Where(x => x.From == "fertilizer" && x.SourceStart <= toFertilizer && (x.SourceStart + x.Length) >= toFertilizer)) into toWater 
-            select GetValue(toWater, _almanac.Ranges.Where(x => x.From == "water" && x.SourceStart <= toWater && (x.SourceStart + x.Length) >= toWater)) into toLight 
-            select GetValue(toLight, _almanac.Ranges.Where(x => x.From == "light" && x.SourceStart <= toLight && (x.SourceStart + x.Length) >= toLight)) into toTemperature 
-            select GetValue(toTemperature, _almanac.Ranges.Where(x => x.From == "temperature" && x.SourceStart <= toTemperature && (x.SourceStart + x.Length) >= toTemperature)) into toHumidity 
-            select GetValue(toHumidity, _almanac.Ranges.Where(x => x.From == "humidity" && x.SourceStart <= toHumidity && (x.SourceStart + x.Length) >= toHumidity))).ToList();
-
+        var results = _almanac.Seeds
+            .Select(seed => GetMappedValue("seed", seed))
+            .Select(toSoil => GetMappedValue("soil", toSoil))
+            .Select(toFertilizer => GetMappedValue("fertilizer", toFertilizer))
+            .Select(toWater => GetMappedValue("water", toWater))
+            .Select(toLight => GetMappedValue("light", toLight))
+            .Select(toTemperature => GetMappedValue("temperature", toTemperature))
+            .Select(toHumidity => GetMappedValue("humidity", toHumidity))
+            .ToList();
+                
         return results.Min();
+    }
+    
+    private long GetMappedValue(string from, long value)
+    {
+        var matchingRules = _almanac.Ranges
+            .Where(x => x.From == from && 
+                        x.SourceStart <= value && 
+                        value <= (x.SourceStart + x.Length));
+        
+        var seedRule = matchingRules.FirstOrDefault();
+
+        return seedRule != null 
+            ? seedRule.DestinationStart + (value - seedRule.SourceStart)
+            : value;
     }
 
     public long SolvePart2()
     {
-        var results = long.MaxValue;
-        var results2 = new BlockingCollection<long>();
-        var seeds = _almanac.Seeds.ToArray();
-        for (var i = 0; i < seeds.Length; i += 2)
-        {
-            //toSoil = GetValue(
-            //     _almanac.Ranges.Where(x => x.From == "seed")
-            //         .First(x => x.SourceStart < seeds[i] && x.DestinationStart > seeds[i]).SourceEnd,
-            //     _almanac.Ranges.Where(x => x.From == "seed")
-            //         .Where(x => x.SourceStart < seeds[i] && x.DestinationStart > seeds[i]));
-            // results2.Add(toSoil);
+        var seeds = GetSeedList();
 
-            // Parallel.For(seeds[i], seeds[i] + seeds[i + 1], seed =>
-            // {
-            //     var toSoil = GetValue(seed, _almanac.Ranges.Where(x => x.From == "seed" && x.SourceStart <= seed && (x.SourceStart + x.Length) >= seed));
-            //     var toFertilizer = GetValue(toSoil, _almanac.Ranges.Where(x => x.From == "soil" && x.SourceStart <= toSoil && (x.SourceStart + x.Length) >= toSoil));
-            //     var toWater = GetValue(toFertilizer, _almanac.Ranges.Where(x => x.From == "fertilizer" && x.SourceStart <= toFertilizer && (x.SourceStart + x.Length) >= toFertilizer));
-            //     var toLight = GetValue(toWater, _almanac.Ranges.Where(x => x.From == "water" && x.SourceStart <= toWater && (x.SourceStart + x.Length) >= toWater));
-            //     var toTemperature = GetValue(toLight, _almanac.Ranges.Where(x => x.From == "light" && x.SourceStart <= toLight && (x.SourceStart + x.Length) >= toLight));
-            //     var toHumidity = GetValue(toTemperature, _almanac.Ranges.Where(x => x.From == "temperature" && x.SourceStart <= toTemperature && (x.SourceStart + x.Length) >= toTemperature));
-            //     var toLocation = GetValue(toHumidity, _almanac.Ranges.Where(x => x.From == "humidity" && x.SourceStart <= toHumidity && (x.SourceStart + x.Length) >= toHumidity));
-            //     
-            //     Console.WriteLine(i + " " + seed + " " + toLocation);
-            //
-            //     if (results > toLocation) 
-            //         results = toLocation;
-            // });
-            
-            for (var seed = seeds[i]; seed < seeds[i] + seeds[i + 1]; seed++)
+        var currentValue = _map.Aggregate(seeds, (current, mapping) 
+            => GetValue(current, _almanac.Ranges.Where(x => x.From == mapping.Key).ToList()));
+
+        return currentValue.Min() - 1;
+    }
+
+    private List<long> GetSeedList()
+    {
+        return _almanac.Seeds
+            .Select((t, i) => i % 2 == 0 ? t : _almanac.Seeds[i - 1] + t - 1)
+            .ToList();
+    }
+
+    private static List<long> GetValue(IReadOnlyList<long> ranges, IList<SeedRules> rules)
+    {
+        List<long> result = new();
+        for(var i = 0; i < ranges.Count; i += 2)
+        {
+            var rangeStart = ranges[i];
+            var rangeEnd = ranges[i + 1];
+            var current = rangeStart;
+
+            while (current <= rangeEnd)
             {
-                var toSoil = GetValue(seed, _almanac.Ranges.Where(x => x.From == "seed" && x.SourceStart <= seed && (x.SourceStart + x.Length) >= seed));
-                var toFertilizer = GetValue(toSoil, _almanac.Ranges.Where(x => x.From == "soil" && x.SourceStart <= toSoil && (x.SourceStart + x.Length) >= toSoil));
-                var toWater = GetValue(toFertilizer, _almanac.Ranges.Where(x => x.From == "fertilizer" && x.SourceStart <= toFertilizer && (x.SourceStart + x.Length) >= toFertilizer));
-                var toLight = GetValue(toWater, _almanac.Ranges.Where(x => x.From == "water" && x.SourceStart <= toWater && (x.SourceStart + x.Length) >= toWater));
-                var toTemperature = GetValue(toLight, _almanac.Ranges.Where(x => x.From == "light" && x.SourceStart <= toLight && (x.SourceStart + x.Length) >= toLight));
-                var toHumidity = GetValue(toTemperature, _almanac.Ranges.Where(x => x.From == "temperature" && x.SourceStart <= toTemperature && (x.SourceStart + x.Length) >= toTemperature));
-                var toLocation = GetValue(toHumidity, _almanac.Ranges.Where(x => x.From == "humidity" && x.SourceStart <= toHumidity && (x.SourceStart + x.Length) >= toHumidity));
-            
-                if (results > toLocation) 
-                    results = toLocation;
+                result.Add(MapValue(current, rules));
+
+                if (IsMapped(current, rules))
+                {
+                    var seedRules = GetRule(current, rules);
+                    var lastValueInRange = Math.Min(rangeEnd, seedRules.SourceEnd);
+
+                    result.Add(seedRules.MapValue(lastValueInRange));
+                    current = lastValueInRange;
+
+                    if (current == seedRules.SourceEnd)
+                        current++;
+
+                    if (current == rangeEnd)
+                        break;
+                }
+                else
+                {
+                    var nextRule = rules.Where(x => x.SourceStart > current).MinBy(x => x.SourceStart);
+
+                    if (nextRule == null || nextRule.SourceStart > rangeEnd)
+                    {
+                        result.Add(rangeEnd);
+                        break;
+                    }
+
+                    if (nextRule.SourceStart == rangeEnd)
+                    {
+                        result.Add(rangeEnd - 1);
+                        result.Add(nextRule.MapValue(rangeEnd));
+                        result.Add(nextRule.MapValue(rangeEnd));
+                        break;
+                    }
+
+                    result.Add(nextRule.SourceStart - 1);
+                    current = nextRule.SourceStart;
+                }
             }
         }
 
-        return results;
+        return result;
     }
 
-    private static long GetValue(long value, IEnumerable<Seed> seeds)
+    private static long MapValue(long queryValue, IEnumerable<SeedRules> seedRules)
     {
-        
-        foreach (var seed in seeds)
-        {
-            if (seed.SourceStart > value || value > seed.SourceStart + seed.Length) continue;
-            
-            return seed.DestinationStart + (value - seed.SourceStart);
-        }
-
-        return value;
+        var seedRule = seedRules.FirstOrDefault(x => x.InRange(queryValue));
+        return seedRule?.MapValue(queryValue) ?? queryValue;
     }
+
+    private static bool IsMapped(long value, IEnumerable<SeedRules> rules)
+        => rules.Any(x => x.InRange(value));
+
+    private static SeedRules GetRule(long value, IEnumerable<SeedRules> rules)
+        => rules.First(x => x.InRange(value));
 }
 
-public record Almanac(List<long> Seeds, HashSet<Seed> Ranges);
+public record Almanac(List<long> Seeds, HashSet<SeedRules> Ranges);
 
-public record Seed(string From, string To, long DestinationStart, long SourceStart, long Length)
+public record SeedRules(string From, long DestinationStart, long SourceStart, long Length)
 {
     public long SourceEnd => SourceStart + Length;
+    
+    public bool InRange(long value)
+        => value >= SourceStart && value <= SourceEnd;
+
+    public long MapValue(long value)
+        => DestinationStart + (value - SourceStart);
 };

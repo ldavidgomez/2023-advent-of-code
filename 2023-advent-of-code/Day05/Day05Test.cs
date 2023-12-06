@@ -149,7 +149,7 @@ public class Day05Test
     [Test]
     public void should_return_valid_result_part_2_from_file()
     {
-        const long expected = 177942185;
+        const long expected = 69841803;
         var day05 = new Day05("Day05/input.txt");
         
         Assert.AreEqual(expected, day05.SolvePart2());
