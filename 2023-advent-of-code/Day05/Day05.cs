@@ -152,7 +152,7 @@ public class Day05
             }
         }
 
-        return results2.Min();
+        return results;
     }
 
     private static long GetValue(long value, IEnumerable<Seed> seeds)
