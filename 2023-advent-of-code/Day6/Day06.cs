@@ -1,18 +1,15 @@
 namespace _2023_advent_of_code.Day6;
 
-
 public class Day06
 {
     private readonly string[] _input;
     private IEnumerable<Race>? _races;
-
 
     public Day06(string path, bool kerning = false)
     {
         _input = File.ReadAllLines(path).ToArray();
         SetRaces(kerning);
     }
-
     public Day06(string[] input, bool kerning = false)
     {
         _input = input;
@@ -22,36 +19,37 @@ public class Day06
     private void SetRaces(bool kerning)
     {
         if (kerning)
-        {
-            SetRacesWithKerning();
-        }
+            SetRacesSingleValue();
         else
-        {
-            SetRacesWithoutKerning();
-        }
+            SetRacesMultipleValues();
+    }
+
+    private void SetRacesSingleValue()
+    {
+        var times = ExtractLong(_input[0]);
+        var distances = ExtractLong(_input[1]);
+            
+        _races = new List<Race> { new Race(distances, times) };
+    }
+
+    private void SetRacesMultipleValues()
+    {
+        var times = ExtractLongList(_input[0]);
+        var distances = ExtractLongList(_input[1]);
+
+        _races = times.Zip(distances, (t, d) => new Race(d, t)).ToList();
     }
 
     private static long ExtractLong(string input)
     {
-        var splitInput = input.Split(":")[1].Trim();
+        var splitInput = input.Split(':')[1].Trim();
         return long.Parse(splitInput.Replace(" ", ""));
     }
 
-    private void SetRacesWithKerning()
+    private static IEnumerable<long> ExtractLongList(string input)
     {
-        var times = ExtractLong(_input[0]);
-        var distances = ExtractLong(_input[1]);
-        _races = new List<Race> { new Race(distances, times) };
+        return input.Split(':')[1].Split(" ").Where(x => x != "").Select(long.Parse);
     }
-
-    private void SetRacesWithoutKerning()
-    {
-        var times = _input[0].Split(":")[1].Split(" ").Where(x => x != "").Select(long.Parse).ToList();
-        var distances = _input[1].Split(":")[1].Split(" ").Where(x => x != "").Select(long.Parse).ToList();
-
-        _races = times.Select((t, i) => new Race(distances[i], t)).ToList();
-    }
-
 
     public long Solve()
     {
@@ -64,17 +62,17 @@ public class Day06
     {
         var duration = race.Duration;
         var recordDistance = race.RecordDistance;
-        
+
         var winningOptions = new List<long>();
         for (var i = 0; i <= duration; i++)
         {
             var speed = i;
             var distance = speed * (duration - i);
-            
+
             if (distance > recordDistance)
                 winningOptions.Add(speed);
         }
-        
+
         return winningOptions;
     }
 }
