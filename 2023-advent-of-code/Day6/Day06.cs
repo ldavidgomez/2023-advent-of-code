@@ -48,19 +48,12 @@ public class Day06
     }
 
 
-    public long SolvePart1()
+    public long Solve()
     {
-        long margin = 1;
-        foreach (var race in _races)
-        {
-            var winningOptions = GetWinningOptions(race);
-            margin *= winningOptions.Count;
-        }
-
-        return margin;
+        return _races.Select(GetWinningOptions).Aggregate<List<long>?, long>(1, (current, winningOptions) => current * winningOptions!.Count);
     }
 
-    private List<long> GetWinningOptions(Race race)
+    private static List<long> GetWinningOptions(Race race)
     {
         var duration = race.Duration;
         var recordDistance = race.RecordDistance;
@@ -76,11 +69,6 @@ public class Day06
         }
         
         return winningOptions;
-    }
-
-    public int SolvePart2()
-    {
-        throw new NotImplementedException();
     }
 }
 

@@ -25,7 +25,7 @@ public class Day06Test
         };
         var day6 = new Day06(input);
 
-        var result = day6.SolvePart1();
+        var result = day6.Solve();
         Assert.AreEqual(expected, result);
     }
     
@@ -35,7 +35,7 @@ public class Day06Test
         const int expected = 303600;
         var day6 = new Day06("Day6/input.txt");
 
-        var result = day6.SolvePart1();
+        var result = day6.Solve();
         Assert.AreEqual(expected, result);
     }
     
@@ -50,7 +50,7 @@ public class Day06Test
         };
         var day6 = new Day06(input, true);
 
-        var result = day6.SolvePart1();
+        var result = day6.Solve();
         Assert.AreEqual(expected, result);
     }
     
@@ -60,7 +60,7 @@ public class Day06Test
         const int expected = 23654842;
         var day6 = new Day06("Day6/input.txt", true);
 
-        var result = day6.SolvePart1();
+        var result = day6.Solve();
         Assert.AreEqual(expected, result);
     }
     
