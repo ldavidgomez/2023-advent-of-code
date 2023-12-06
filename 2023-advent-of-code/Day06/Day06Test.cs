@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace _2023_advent_of_code.Day6;
+namespace _2023_advent_of_code.Day06;
 
 public class Day06Test
 {
@@ -33,7 +33,7 @@ public class Day06Test
     public void should_return_valid_result_from_file()
     {
         const int expected = 303600;
-        var day6 = new Day06("Day6/input.txt");
+        var day6 = new Day06("Day06/input.txt");
 
         var result = day6.Solve();
         Assert.AreEqual(expected, result);
@@ -58,9 +58,19 @@ public class Day06Test
     public void should_return_valid_result_from_file_with_kerning()
     {
         const int expected = 23654842;
-        var day6 = new Day06("Day6/input.txt", true);
+        var day6 = new Day06("Day06/input.txt", true);
 
         var result = day6.Solve();
+        Assert.AreEqual(expected, result);
+    }
+    
+    [Test]
+    public void should_return_valid_result_from_file_with_kerning_fastest()
+    {
+        const int expected = 23654842;
+        var day6 = new Day06("Day06/input.txt", true);
+        
+        var result = day6.SolveFastest();
         Assert.AreEqual(expected, result);
     }
     
