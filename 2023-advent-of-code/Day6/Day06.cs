@@ -4,7 +4,7 @@ namespace _2023_advent_of_code.Day6;
 public class Day06
 {
     private readonly string[] _input;
-    private IEnumerable<Race> _races;
+    private IEnumerable<Race>? _races;
 
 
     public Day06(string path, bool kerning = false)
@@ -50,7 +50,9 @@ public class Day06
 
     public long Solve()
     {
-        return _races.Select(GetWinningOptions).Aggregate<List<long>?, long>(1, (current, winningOptions) => current * winningOptions!.Count);
+        return (_races ?? throw new InvalidOperationException())
+            .Select(GetWinningOptions)
+            .Aggregate<List<long>?, long>(1, (current, winningOptions) => current * winningOptions!.Count);
     }
 
     private static List<long> GetWinningOptions(Race race)
