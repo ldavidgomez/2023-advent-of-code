@@ -17,7 +17,8 @@ public class Program
             .AddLogger(ConsoleLogger.Default)
             .AddColumnProvider(DefaultColumnProviders.Instance);
         
-        BenchmarkRunner.Run<Benchy>(config);
+        //BenchmarkRunner.Run<Benchy>(config);
+        
         // var day05 = new Day05.Day05("Day05/input.txt");
         // var result05 = day05.SolvePart1();
         // Console.WriteLine($"Part 1: {result05}");
@@ -27,6 +28,12 @@ public class Program
         // var day06 = new Day06.Day06("Day06/input.txt");
         // var result06 = day06.Solve();
         // Console.WriteLine($"Part 1: {result06}");
+        // result06 = day06.SolveFastest();
+        // Console.WriteLine($"Part 2: {result06}");
+        
+        var day07 = new Day07.Day07("Day07/input.txt");
+        var result07 = day07.Solve();
+        Console.WriteLine($"Part 1: {result07}");
         // result06 = day06.SolveFastest();
         // Console.WriteLine($"Part 2: {result06}");
 
