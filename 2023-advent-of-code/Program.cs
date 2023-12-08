@@ -31,12 +31,15 @@ public class Program
         // result06 = day06.SolveFastest();
         // Console.WriteLine($"Part 2: {result06}");
         
-        var day07 = new Day07.Day07("Day07/input.txt");
-        var result07 = day07.Solve();
-        Console.WriteLine($"Part 1: {result07}");
+        // var day07 = new Day07.Day07("Day07/input.txt");
+        // var result07 = day07.Solve();
+        // Console.WriteLine($"Part 1: {result07}");
         // result06 = day06.SolveFastest();
         // Console.WriteLine($"Part 2: {result06}");
-
+        
+        var day08 = new Day08.Day08("Day08/input.txt");
+        var result08 = day08.SolvePart1();
+        Console.WriteLine($"Part 1: {result08}");
     }
     
     public class Benchy
