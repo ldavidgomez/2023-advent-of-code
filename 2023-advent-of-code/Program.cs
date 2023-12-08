@@ -40,6 +40,8 @@ public class Program
         var day08 = new Day08.Day08("Day08/input.txt");
         var result08 = day08.SolvePart1();
         Console.WriteLine($"Part 1: {result08}");
+        result08 = day08.SolvePart2();
+        Console.WriteLine($"Part 2: {result08}");
     }
     
     public class Benchy
