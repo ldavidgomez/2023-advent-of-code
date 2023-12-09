@@ -72,6 +72,7 @@ public class History
     {
         Numbers = numbers;
         SetLinesToZero();
+        //UpdateNumbersToZero(); // Using Zip, worst performance
         SetLastNumber();
         SetFirstNumber();
     }
@@ -87,6 +88,27 @@ public class History
             break;
         }
     }
+    
+    private void UpdateNumbersToZero()
+    {
+        while (HasNonZeroNumber())
+        {
+            var newNumbers = DetermineDifferences();
+            Numbers = Numbers.Append(newNumbers);
+        }
+    }
+    
+    private bool HasNonZeroNumber()
+    {
+        var newNumbers = DetermineDifferences();
+        return newNumbers.Any(x => x != 0);
+    }
+
+    private IEnumerable<long> DetermineDifferences()
+    {
+        return Numbers.Last().Zip(Numbers.Last().Skip(1), (first, second) => second - first).ToList();
+    }
+
 
     private static List<long> CalculateDifferences(long[] lastLine)
     {
