@@ -83,8 +83,10 @@ public class History
         {
             var newNumbers = CalculateDifferences(Numbers.Last().ToArray());
             Numbers = Numbers.Append(newNumbers);
+            
             if (newNumbers.Any(x => x != 0)) 
                 continue;
+            
             break;
         }
     }
