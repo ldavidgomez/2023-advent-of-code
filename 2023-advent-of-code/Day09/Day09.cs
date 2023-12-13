@@ -50,11 +50,12 @@ public class Day09
        return _history.Sum(x => x.LastNumber);
     }
 
-    #endregion
     public long SolvePart2()
     {
         return _history.Sum(x => x.FirstNumber);
     }
+    
+    #endregion
 }
 
 public static class HistoryFactory
